@@ -195,7 +195,7 @@ for my $stream ( split /,/,$opt_stream ){
 
 my @idol_talk = qw(
 	ねむい…
-	おっぱ♪いー！
+	おっぱいー♪
 	ふーふりー♪ふらふー♪ふらー♪
 	るーんー♪りーるー♪んーらー♪
 );
