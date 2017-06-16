@@ -42,7 +42,7 @@ sub decodeHTML($){
 	$length and $b .= substr( $sv,$last_end,$length);
 	
 	$b = decode_entities($b);
-	$b =~ s/\s+/ /g;
+	$b =~ s/[\s\p{Block: Emoticons}]+/ /g;
 	$b =~ s/^\s//;
 	$b =~ s/\s$//;
 	return $b;
@@ -67,7 +67,7 @@ sub new {
 sub ping{
 	my $self = shift;
 	if( $self->{conn} ){
-		say "sending ping.";
+	#	say "sending ping.";
 		$self->{last_ping_sent} = time;
 		$self->{conn}->send( AnyEvent::WebSocket::Message->new(body=>"",opcode => 9) );
 	}

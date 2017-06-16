@@ -37,10 +37,14 @@ sub send{
 	). $message;
 
 	tcp_connect $self->{host},$self->{port},sub{
-		my($fh) = @_ or say "BouyomiSender: TCP connection failed. $self->{host},$self->{port} $!\n";
-		my $handle = new AnyEvent::Handle( fh => $fh );
-		$handle->push_write($data);
-		$handle->on_drain(sub{ undef $handle; });
+		my($fh) = @_;
+		if(not $fh){
+			say "BouyomiSender: TCP connection failed. $self->{host},$self->{port} $!\n";
+		}else{
+			my $handle = new AnyEvent::Handle( fh => $fh );
+			$handle->push_write($data);
+			$handle->on_drain(sub{ undef $handle; });
+		}
 	};
 }
 
