@@ -177,7 +177,11 @@ for my $stream ( split /,/,$opt_stream ){
 		stream=> $stream,
 		callback=>sub{
 			my($name,$message)=@_;
+
+			return if not $message;
+
 			my $talk = "${name}♪ ${message}";
+
 			if( not grep {$_ eq $talk} @check ){
 				push @check,$talk;
 				shift @check if @check > 60;
@@ -193,9 +197,9 @@ for my $stream ( split /,/,$opt_stream ){
 ###########################################################
 # タイマー
 
-my @idol_talk = qw(
+my @idle_talk = qw(
 	ねむい…
-	おっぱいー♪
+	おっぱいー♪ぷるっぷるっん♪まるいね,おおきいね,おっぱい
 	ふーふりー♪ふらふー♪ふらー♪
 	るーんー♪りーるー♪んーらー♪
 );
@@ -207,8 +211,8 @@ my $timer = AnyEvent->timer(
 			$bot->on_timer;
 		}
 		if( time - $last_send_time >= 10 ){
-			if( @idol_talk and int rand 2 >= 1 ){
-				bouyomi_send( $idol_talk[ int rand @idol_talk]);
+			if( @idle_talk and int rand 2 >= 1 ){
+				bouyomi_send( $idle_talk[ int rand @idle_talk]);
 			}elsif( @check ){
 				bouyomi_send( $check[ int rand @check]);
 			}

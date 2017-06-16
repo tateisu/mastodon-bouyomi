@@ -35,6 +35,23 @@ while(my($k,$v)= each %$eac){
 }
 my $reEmoji = $rt->regexp;
 
+sub stripPunc($){
+	my($dst,$src)=("",@_);
+	my $src_len = length $src;
+	for(my $i=0;$i<$src_len;++$i){
+		my $c = substr($src,$i,1);
+		$dst .= $c;
+		if( $c =~ /[\p{Symbol}\p{P}]/ ){
+			my $end = $i+1;
+			++$end while( $end < $src_len && substr($src,$end,1) eq $c );
+			if($end-$i >= 3 ){
+				$i = $end-1;
+			}
+		}
+	}
+	return $dst;
+}
+
 
 sub decodeHTML($){
 	my($sv)=@_;
@@ -59,10 +76,17 @@ sub decodeHTML($){
 	$length and $b .= substr( $sv,$last_end,$length);
 	
 	$b = decode_entities($b);
+
+	# 絵文字を空白にする
 	$b =~ s/$reEmoji/ /g;
-	$b =~ s/\s+/ /g;
-	$b =~ s/^\s//;
-	$b =~ s/\s$//;
+
+	# 同一の記号が連続してたら１文字にまとめる
+	$b = stripPunc($b);
+
+	# 余分な空白の除去
+	$b =~ s/[\s　]+/ /g;
+	$b =~ s/^[\s　]//;
+	$b =~ s/[\s　]$//;
 	return $b;
 }
 
