@@ -9,8 +9,11 @@ listening mastodon streaming api and send message text to BouyomiChan.
 - use AnyEvent::HTTP;
 - use AnyEvent::WebSocket::Client;
 - use AnyEvent::Socket;
+- use Regexp::Trie;
 
 CygwinにAnyEvent系パッケージを入れるのがめんどくさいかも？
+curl, libcrypt-devel , Module::Builde は cygwin packageで入れたような気がする
+他は cpanm で適当に入れた
 
 # 認証
 以下のコマンドを実行すると認証してアクセストークンをaccess_info.json に保存します
