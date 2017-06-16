@@ -64,7 +64,7 @@ GetOptions(
 	"bouyomi_port|bp=i"   => \$opt_bouyomi_port,  
 ) or usage "bad options.";
 
-if( not $opt_config or not $opt_stream){
+if( not $opt_config or not $opt_stream ){
 	usage();
 }
 
@@ -161,22 +161,27 @@ my $config;
 # ボットオブジェクト
 
 my $bouyomi = BouyomiSender->new( host=> $opt_bouyomi_host, port => $opt_bouyomi_port);
+my $last_send_time = time;
+sub bouyomi_send{
+	my($talk)=@_;
+	say $talk;
+	$bouyomi->send($talk);
+	$last_send_time = time;
+}
 
-my @check;
 my @bot;
-
+my @check;
 for my $stream ( split /,/,$opt_stream ){
 	push @bot, StreamingListenerBot->new( 
 		config=> $config, 
 		stream=> $stream,
 		callback=>sub{
 			my($name,$message)=@_;
-			my $talk = "${name}。${message}";
+			my $talk = "${name}♪。${message}";
 			if( not grep {$_ eq $talk} @check ){
 				push @check,$talk;
 				shift @check if @check > 60;
-				say $talk;
-				$bouyomi->send($talk);
+				bouyomi_send($talk);
 			}
 		},
 	);
@@ -188,11 +193,25 @@ for my $stream ( split /,/,$opt_stream ){
 ###########################################################
 # タイマー
 
+my @idol_talk = qw(
+	ねむい…
+	おっぱ♪いー！
+	ふーふりー♪ふらふー♪ふらー♪
+	るーんー♪りーるー♪んーらー♪
+);
+
 my $timer = AnyEvent->timer(
 	interval => 1 , 
 	cb => sub {
 		for my $bot(@bot){
 			$bot->on_timer;
+		}
+		if( time - $last_send_time >= 10 ){
+			if( @idol_talk and int rand 2 >= 1 ){
+				bouyomi_send( $idol_talk[ int rand @idol_talk]);
+			}elsif( @check ){
+				bouyomi_send( $check[ int rand @check]);
+			}
 		}
 	}
 );

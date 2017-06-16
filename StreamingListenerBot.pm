@@ -24,12 +24,12 @@ my $eac;
 	open(my $fh,"<","eac.json") or die "eac.json $!";
 	local $/ = undef;
 	$eac =  decode_json <$fh>;
-	close($fh);
+	close($fh) or die "eac.json $!";
 }
 my $rt = Regexp::Trie->new;
 while(my($k,$v)= each %$eac){
 	my $sv = join '',map { chr( hex( $_ )) } split /-/,$k;
-	if( $sv =~/[^0x00-0x7f]/ ){
+	if( $sv =~ /[^\x00-\x7f]/ ){
 		$rt->add($sv);
 	}
 }
@@ -207,11 +207,15 @@ sub start_stream{
 				return if not $status;
 				#
 				$status->{reblog} and $status = $status->{reblog};
+				
 				#
 				my $who = $status->{account};
+				
+				return if $who->{acct} =~ /\Qjpnews.site\E$/i;
+				
 				$self->{callback}( 
-					decodeHTML($who->{display_name}),
-					decodeHTML($status->{content})
+					decodeHTML($who->{display_name} ? $who->{display_name} :  $who->{username}),
+					decodeHTML($status->{spoiler_text} ? $status->{spoiler_text} : $status->{content})
 				);
 			});
 
