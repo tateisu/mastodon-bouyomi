@@ -12,11 +12,28 @@ use AnyEvent::WebSocket::Client;
 use JSON;
 use URI::Escape;
 use HTML::Entities;
+use Regexp::Trie;
 
 my $JSON = JSON->new;
 
 ####################################################
 # ユーティリティ
+
+my $eac;
+{
+	open(my $fh,"<","eac.json") or die "eac.json $!";
+	local $/ = undef;
+	$eac =  decode_json <$fh>;
+	close($fh);
+}
+my $rt = Regexp::Trie->new;
+while(my($k,$v)= each %$eac){
+	my $sv = join '',map { chr( hex( $_ )) } split /-/,$k;
+	if( $sv =~/[^0x00-0x7f]/ ){
+		$rt->add($sv);
+	}
+}
+my $reEmoji = $rt->regexp;
 
 
 sub decodeHTML($){
@@ -42,7 +59,8 @@ sub decodeHTML($){
 	$length and $b .= substr( $sv,$last_end,$length);
 	
 	$b = decode_entities($b);
-	$b =~ s/[\s\p{Block: Emoticons}]+/ /g;
+	$b =~ s/$reEmoji/ /g;
+	$b =~ s/\s+/ /g;
 	$b =~ s/^\s//;
 	$b =~ s/\s$//;
 	return $b;

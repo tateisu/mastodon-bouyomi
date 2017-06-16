@@ -8,9 +8,10 @@ use feature qw( say );
 BEGIN{ push @INC,'.' }
 use StreamingListenerBot;
 use BouyomiSender;
+use utf8;
 
-binmode \*STDOUT,":utf8";
-binmode \*STDERR,":utf8";
+binmode \*STDOUT,":encoding(utf8)";
+binmode \*STDERR,":encoding(utf8)";
 
 
 sub usage{
@@ -170,12 +171,11 @@ for my $stream ( split /,/,$opt_stream ){
 		stream=> $stream,
 		callback=>sub{
 			my($name,$message)=@_;
-			say "$name: $message";
-			
-			my $talk = "$name $message";
+			my $talk = "${name}。${message}";
 			if( not grep {$_ eq $talk} @check ){
 				push @check,$talk;
 				shift @check if @check > 60;
+				say $talk;
 				$bouyomi->send($talk);
 			}
 		},
