@@ -2,6 +2,7 @@
 listening mastodon streaming api and send message text to BouyomiChan.
 
 # 依存関係
+- 棒読みちゃん http://chi.usamimi.info/Program/Application/BouyomiChan/
 - cygwinにUTF-8なシェル
 - curl
 - perl
