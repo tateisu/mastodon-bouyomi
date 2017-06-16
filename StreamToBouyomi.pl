@@ -33,6 +33,8 @@ options:
   -c config_file  : file to load instance-name,client_id,client_secret,access_token
   -s stream-type  : comma-separated list of stream type. default is 'public:local'
   -v              : verbose mode.
+  --bh host : host name or ip address of BouyomiChan
+  --bp port : post number of BouyomiChan
 END
 	exit 1;
 }
@@ -60,6 +62,10 @@ GetOptions(
 	"bouyomi_host|bh=s"   => \$opt_bouyomi_host,  
 	"bouyomi_port|bp=i"   => \$opt_bouyomi_port,  
 ) or usage "bad options.";
+
+if( not $opt_config or not $opt_stream){
+	usage();
+}
 
 say "verbose=$verbose";
 say "opt_instance=$opt_instance";
@@ -130,11 +136,7 @@ if( $opt_instance and $opt_user and $opt_password ){
 # 保存したトークンを読み込む
 
 my $config;
-
-if( not $opt_config ){
-	say "configuration file is not specified.";
-	exit 41;
-}else{
+{
 	my $json;
 	{
 		open(my $fh,"<",$opt_config) or die "$opt_config : $!";
