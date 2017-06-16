@@ -177,7 +177,7 @@ for my $stream ( split /,/,$opt_stream ){
 		stream=> $stream,
 		callback=>sub{
 			my($name,$message)=@_;
-			my $talk = "${name}♪。${message}";
+			my $talk = "${name}♪ ${message}";
 			if( not grep {$_ eq $talk} @check ){
 				push @check,$talk;
 				shift @check if @check > 60;
