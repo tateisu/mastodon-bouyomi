@@ -197,12 +197,27 @@ for my $stream ( split /,/,$opt_stream ){
 ###########################################################
 # タイマー
 
-my @idle_talk = qw(
-	ねむい…
-	おっぱいー♪ぷるっぷるっん♪まるいね,おおきいね,おっぱい
-	ふーふりー♪ふらふー♪ふらー♪
-	るーんー♪りーるー♪んーらー♪
-);
+my @idle_talk;
+my $idle_talk_last_load = 0;
+
+sub load_idle_talk{
+
+	my $now = time;
+	return if $now - $idle_talk_last_load < 10;
+	$idle_talk_last_load = time;
+
+	if( open(my $fh,"<:encoding(utf8)","idle_talk.txt") ){
+		@idle_talk = ();
+		while(<$fh>){
+			s/^\s*#.+//;
+			s/\s+$//;
+			s/^\s+//;
+			next if not length;
+			push @idle_talk,$_;
+		}
+		close($fh);
+	}
+}
 
 my $timer = AnyEvent->timer(
 	interval => 1 , 
@@ -211,10 +226,13 @@ my $timer = AnyEvent->timer(
 			$bot->on_timer;
 		}
 		if( time - $last_send_time >= 10 ){
-			if( @idle_talk and int rand 2 >= 1 ){
-				bouyomi_send( $idle_talk[ int rand @idle_talk]);
-			}elsif( @check ){
+			if( @check and rand 10 >= 3 ){
 				bouyomi_send( $check[ int rand @check]);
+			}else{
+				load_idle_talk();
+				if( @idle_talk ){
+					bouyomi_send( $idle_talk[ int rand @idle_talk]);
+				}
 			}
 		}
 	}
@@ -238,7 +256,8 @@ my $signal_watcher_term = AnyEvent->signal(signal => 'TERM',cb=>sub {
 
 my $signal_watcher_hup = AnyEvent->signal(signal => 'HUP',cb=>sub {
 	say "signal HUP";
-	## reload();
+	
+	load_idle_talk();
 });
 
 ###########################################################
