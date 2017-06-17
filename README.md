@@ -3,14 +3,36 @@ listening mastodon streaming api and send message text to BouyomiChan.
 
 # 依存関係
 - 棒読みちゃん http://chi.usamimi.info/Program/Application/BouyomiChan/
-- cygwinにUTF-8なシェル
-- curl
-- perl
-- use AnyEvent::HTTP;
-- use AnyEvent::WebSocket::Client;
-- use AnyEvent::Socket;
+- cygwin + UTF-8なシェル(ConsoleZなど)
 
-CygwinにAnyEvent系パッケージを入れるのがめんどくさいかも？
+### cygwin package を入れる
+cygwin setup なりapt-cyg なりで以下のcygwin package を入れる
+```
+perl
+curl
+make
+git
+perl-common-sense
+perl-Canary-Stability
+perl-Module-Build
+perl-HTML-Parser
+perl-Net-SSLeay
+```
+
+### cpanm を入れる
+
+```
+cd /usr/local/bin
+curl -L https://cpanmin.us/ -o cpanm
+chmod a+x cpanm
+```
+### cpanmでperlパッケージを入れる
+```
+cpanm AnyEvent::HTTP
+cpanm AnyEvent::WebSocket::Client
+cpanm Regexp::Trie
+cpanm JSON
+```
 
 # 認証
 以下のコマンドを実行すると認証してアクセストークンをaccess_info.json に保存します
