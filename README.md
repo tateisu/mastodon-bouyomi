@@ -19,14 +19,18 @@ perl-HTML-Parser
 perl-Net-SSLeay
 ```
 
-### cpanm を入れる
+### cpanminus を入れる
 
+https://github.com/miyagawa/cpanminus の説明を読んでcpanminusを入れる
+
+cygwinだと下記の方法でまあオッケー
 ```
 cd /usr/local/bin
 curl -L https://cpanmin.us/ -o cpanm
 chmod a+x cpanm
 ```
-### cpanmでperlパッケージを入れる
+
+### cpanminus でperlパッケージを入れる
 ```
 cpanm AnyEvent::HTTP
 cpanm AnyEvent::WebSocket::Client
