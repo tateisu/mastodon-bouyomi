@@ -27,10 +27,12 @@ curl -L https://cpanmin.us/ -o cpanm
 chmod a+x cpanm
 ```
 ### cpanmでperlパッケージを入れる
+```
 cpanm AnyEvent::HTTP
 cpanm AnyEvent::WebSocket::Client
 cpanm Regexp::Trie
 cpanm JSON
+```
 
 # 認証
 以下のコマンドを実行すると認証してアクセストークンをaccess_info.json に保存します
